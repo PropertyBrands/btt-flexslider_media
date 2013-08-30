@@ -1,0 +1,8 @@
+name = Flexslider for Media
+package = Media
+core = 7.x
+version = 7.x-1.x
+description = "Provides a custom field formatter to utilize flexslider in conjuntion with media module file types."
+
+dependencies[] = flexslider
+dependencies[] = media

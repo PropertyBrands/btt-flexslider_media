@@ -1,0 +1,274 @@
+<?php
+/**
+ *
+ * array(13) {
+  ["description"]=>
+  string(0) ""
+  ["display"]=>
+  array(3) {
+    ["default"]=>
+    array(5) {
+      ["label"]=>
+      string(5) "above"
+      ["type"]=>
+      string(5) "image"
+      ["weight"]=>
+      string(1) "5"
+      ["settings"]=>
+      array(2) {
+        ["image_link"]=>
+        string(0) ""
+        ["image_style"]=>
+        string(0) ""
+      }
+      ["module"]=>
+      string(5) "image"
+    }
+    ["full"]=>
+    array(5) {
+      ["label"]=>
+      string(5) "above"
+      ["type"]=>
+      string(5) "image"
+      ["weight"]=>
+      string(1) "5"
+      ["settings"]=>
+      array(2) {
+        ["image_link"]=>
+        string(0) ""
+        ["image_style"]=>
+        string(0) ""
+      }
+      ["module"]=>
+      string(5) "image"
+    }
+    ["for_overlays"]=>
+    array(5) {
+      ["label"]=>
+      string(6) "hidden"
+      ["type"]=>
+      string(16) "flexslider_media"
+      ["weight"]=>
+      string(1) "0"
+      ["settings"]=>
+      array(4) {
+        ["view_mode_full"]=>
+        string(10) "rooms_full"
+        ["controls"]=>
+        array(2) {
+          ["use_flex"]=>
+          int(1)
+          ["view_mode_thumb"]=>
+          string(6) "teaser"
+        }
+        ["image_style"]=>
+        string(0) ""
+        ["image_link"]=>
+        string(0) ""
+      }
+      ["module"]=>
+      string(16) "flexslider_media"
+    }
+  }
+  ["label"]=>
+  string(5) "Image"
+  ["required"]=>
+  int(0)
+  ["settings"]=>
+  array(9) {
+    ["file_directory"]=>
+    string(8) "vr-rooms"
+    ["file_extensions"]=>
+    string(16) "png gif jpg jpeg"
+    ["max_filesize"]=>
+    string(0) ""
+    ["max_resolution"]=>
+    string(0) ""
+    ["min_resolution"]=>
+    string(0) ""
+    ["alt_field"]=>
+    int(0)
+    ["title_field"]=>
+    int(0)
+    ["default_image"]=>
+    int(0)
+    ["user_register_form"]=>
+    bool(false)
+  }
+  ["widget"]=>
+  array(5) {
+    ["weight"]=>
+    int(6)
+    ["type"]=>
+    string(13) "media_generic"
+    ["module"]=>
+    string(5) "media"
+    ["active"]=>
+    int(1)
+    ["settings"]=>
+    array(4) {
+      ["allowed_types"]=>
+      array(4) {
+        ["image"]=>
+        string(5) "image"
+        ["video"]=>
+        int(0)
+        ["audio"]=>
+        int(0)
+        ["document"]=>
+        int(0)
+      }
+      ["allowed_schemes"]=>
+      array(4) {
+        ["public"]=>
+        string(6) "public"
+        ["http"]=>
+        int(0)
+        ["https"]=>
+        int(0)
+        ["feed"]=>
+        int(0)
+      }
+      ["browser_plugins"]=>
+      array(4) {
+        ["upload"]=>
+        int(0)
+        ["media_default--media_browser_1"]=>
+        int(0)
+        ["media_default--media_browser_my_files"]=>
+        int(0)
+        ["remote_file"]=>
+        int(0)
+      }
+      ["progress_indicator"]=>
+      string(8) "throbber"
+    }
+  }
+  ["ds_extras_field_template"]=>
+  string(0) ""
+  ["id"]=>
+  string(3) "475"
+  ["field_id"]=>
+  string(3) "446"
+  ["field_name"]=>
+  string(28) "field_village_vr_rooms_image"
+  ["entity_type"]=>
+  string(21) "field_collection_item"
+  ["bundle"]=>
+  string(22) "field_village_vr_rooms"
+  ["deleted"]=>
+  string(1) "0"
+}
+
+ * 
+ * @return <type> 
+ */
+
+function flexslider_media_field_formatter_info() {
+  return array(
+    'flexslider_media' => array(
+      'label' => t('Flexlider Media'),
+      'field types' => array('image', 'file'),
+      'settings' => array(
+        'view_mode_full' => 'default',
+        'controls' => array(
+          'use_flex' => 1,
+          'view_mode_thumb' => 'default'
+        )
+      )
+    )
+  );
+}
+
+function flexslider_media_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $file_entity_info = entity_get_info('file');
+  $file_view_modes = $file_entity_info['view modes'];
+
+  $file_view_modes_options = array();
+
+  foreach ($file_view_modes as $machine_name => $details) {
+    $file_view_modes_options[$machine_name] = $details['label'];
+  }
+
+  //$formatter = field_ui_formatter_options($field['type']);
+
+  $form = array();
+
+  $form['#tree'] = TRUE;
+  $form['view_mode_full'] = array(
+    '#type' => 'select',
+    '#title' => t('Full Slide View Mode'),
+    '#options' => $file_view_modes_options,
+    '#default_value' => $settings['view_mode_full']
+  );
+
+  $form['controls'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Controls'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE
+  );
+
+  $form['controls']['use_flex'] = array(
+    '#title' => t('Use Flexslider'),
+    '#type' => 'checkbox',
+    '#default_value' => $settings['controls']['use_flex']
+  );
+
+  $form['controls']['view_mode_thumb'] = array(
+    '#type' => 'select',
+    '#title' => t('Thumb Strip View Mode'),
+    '#options' => $file_view_modes_options,
+    '#default_value' => $settings['controls']['view_mode_thumb']
+  );
+
+  return $form;
+}
+
+function flexslider_media_add_includes() {
+  drupal_add_library('flexslider', 'flexslider');
+  drupal_add_js(drupal_get_path('module', 'flexslider_media') . '/js/flexslider_media.js');
+  drupal_add_css(drupal_get_path('module', 'flexslider_media') . "/css/flexslider-media.css");
+}
+
+function flexslider_media_field_formatter_settings_summary($field, $instance, $view_mode) {
+ //kpr($field);
+ 
+
+ $settings = $instance['display'][$view_mode]['settings'];
+$flex_controls = ($settings['controls']['use_flex']) ? 'Yes<br /><strong>Controls View Mode:</strong> ' . $settings['controls']['view_mode_thumb'] : 'No';
+ $summary = "<strong>Slide View Mode:</strong> " . $settings['view_mode_full'] . "<br /><strong>Use Flexslider Carousel for Controls:</strong> " . $flex_controls;
+
+
+
+  return $summary;
+}
+
+function flexslider_media_theme($existing, $type, $theme, $path) {
+  return array(
+    'flexslider_media_formatter' => array(
+      'render element' => 'element',
+      'path' => $path . '/theme',
+      'template' => 'flexslider-media-formatter',
+      'file' => 'flexslider_media.theme.inc'
+    )
+  );
+}
+
+function flexslider_media_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $settings = $display['settings'];
+  if(!count($items)) {
+    return array();
+  }
+
+  $settings['items_total'] = count($items);
+  $element = array(
+    '#theme' => 'flexslider_media_formatter',
+    '#settings' => $settings
+  );
+
+  return $element;
+}
